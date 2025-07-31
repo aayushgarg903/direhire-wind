@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BackgroundScene } from "@/components/3d/BackgroundScene";
-import { Card3D } from "@/components/3d/Card3D";
 import { 
   MapPin, 
   Star, 
@@ -23,13 +21,9 @@ const Index = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 relative overflow-hidden">
-      {/* 3D Background Animation */}
-      <div className="fixed inset-0 z-0 opacity-30">
-        <BackgroundScene className="w-full h-full" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       {/* Enhanced Navigation */}
-      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 relative">
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-8">
@@ -85,18 +79,12 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16 relative z-10">
-        <div className="text-center mb-12 relative">
-          {/* 3D Construction Scene */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-96 max-w-md opacity-20">
-              <BackgroundScene className="w-full h-full" showConstruction={true} />
-            </div>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent relative z-10">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Connect Workers with Customers
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8 relative z-10">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             An effective platform where workers get hired by customers without traveling too much. 
             Perfect for construction and skilled services worldwide.
           </p>
@@ -118,111 +106,103 @@ const Index = () => {
           </Button>
         </div>
 
-        {/* Sign Up Options with 3D Effects */}
+        {/* Sign Up Options */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-          <div className="relative">
-            <Card3D className="h-full">
-              <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20 bg-white/90 backdrop-blur-sm">
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="h-8 w-8 text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-2xl">Join as Worker</CardTitle>
-                  <CardDescription className="text-base">
-                    Find work opportunities near you. Build your reputation and grow your business.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Star className="h-4 w-4 text-yellow-500" />
-                      <span>Build your reputation with reviews</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4 text-blue-500" />
-                      <span>Work in your local area</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Zap className="h-4 w-4 text-green-500" />
-                      <span>Get instant notifications</span>
-                    </div>
-                  </div>
-                  <Button 
-                    onClick={() => navigate("/auth")}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Sign Up as Worker
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </Card3D>
-          </div>
+          <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20">
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Join as Worker</CardTitle>
+              <CardDescription className="text-base">
+                Find work opportunities near you. Build your reputation and grow your business.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <span>Build your reputation with reviews</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4 text-blue-500" />
+                  <span>Work in your local area</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Zap className="h-4 w-4 text-green-500" />
+                  <span>Get instant notifications</span>
+                </div>
+              </div>
+              <Button 
+                onClick={() => navigate("/auth")}
+                className="w-full"
+                size="lg"
+              >
+                Sign Up as Worker
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
 
-          <div className="relative">
-            <Card3D className="h-full">
-              <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-secondary/20 bg-white/90 backdrop-blur-sm">
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-secondary to-secondary/80 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Shield className="h-8 w-8 text-secondary-foreground" />
-                  </div>
-                  <CardTitle className="text-2xl">Find Workers</CardTitle>
-                  <CardDescription className="text-base">
-                    Get quality work done by skilled professionals in your area.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Shield className="h-4 w-4 text-green-500" />
-                      <span>Verified professionals only</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4 text-orange-500" />
-                      <span>Quick response times</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Star className="h-4 w-4 text-yellow-500" />
-                      <span>Rated and reviewed services</span>
-                    </div>
-                  </div>
-                  <Button 
-                    onClick={() => navigate("/auth")}
-                    variant="secondary"
-                    className="w-full"
-                    size="lg"
-                  >
-                    Sign Up as Customer
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </Card3D>
-          </div>
+          <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-secondary/20">
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-secondary to-secondary/80 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-secondary-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Find Workers</CardTitle>
+              <CardDescription className="text-base">
+                Get quality work done by skilled professionals in your area.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Shield className="h-4 w-4 text-green-500" />
+                  <span>Verified professionals only</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4 text-orange-500" />
+                  <span>Quick response times</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <span>Rated and reviewed services</span>
+                </div>
+              </div>
+              <Button 
+                onClick={() => navigate("/auth")}
+                variant="secondary"
+                className="w-full"
+                size="lg"
+              >
+                Sign Up as Customer
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Stats Section with 3D Cards */}
+        {/* Stats Section */}
         <div className="grid md:grid-cols-4 gap-6 mb-16">
-          <Card className="text-center hover:scale-105 transition-transform duration-300 bg-white/80 backdrop-blur-sm">
+          <Card className="text-center">
             <CardContent className="p-6">
               <div className="text-3xl font-bold text-primary mb-2">12,000+</div>
               <div className="text-sm text-muted-foreground">Active Workers</div>
             </CardContent>
           </Card>
-          <Card className="text-center hover:scale-105 transition-transform duration-300 bg-white/80 backdrop-blur-sm">
+          <Card className="text-center">
             <CardContent className="p-6">
               <div className="text-3xl font-bold text-primary mb-2">8,500+</div>
               <div className="text-sm text-muted-foreground">Projects Completed</div>
             </CardContent>
           </Card>
-          <Card className="text-center hover:scale-105 transition-transform duration-300 bg-white/80 backdrop-blur-sm">
+          <Card className="text-center">
             <CardContent className="p-6">
               <div className="text-3xl font-bold text-primary mb-2">95%</div>
               <div className="text-sm text-muted-foreground">Success Rate</div>
             </CardContent>
           </Card>
-          <Card className="text-center hover:scale-105 transition-transform duration-300 bg-white/80 backdrop-blur-sm">
+          <Card className="text-center">
             <CardContent className="p-6">
               <div className="text-3xl font-bold text-primary mb-2">24/7</div>
               <div className="text-sm text-muted-foreground">Support Available</div>
