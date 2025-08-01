@@ -3,9 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MapPin, Phone, Clock, Users, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const BoothServices = () => {
   const navigate = useNavigate();
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
 
   const nearbyBooths = [
     {
@@ -16,7 +21,8 @@ const BoothServices = () => {
       hours: "Mon-Sat: 8:00 AM - 6:00 PM",
       services: ["Worker Registration", "Job Matching", "KYC Verification"],
       waitTime: "5-10 mins",
-      distance: "0.8 km"
+      distance: "0.8 km",
+      coordinates: [-74.006, 40.7128] // NYC coordinates for demo
     },
     {
       id: 2,
@@ -26,7 +32,8 @@ const BoothServices = () => {
       hours: "Mon-Sat: 9:00 AM - 7:00 PM",
       services: ["Worker Registration", "Customer Support", "Document Assistance"],
       waitTime: "10-15 mins",
-      distance: "2.1 km"
+      distance: "2.1 km",
+      coordinates: [-74.0059, 40.7614]
     },
     {
       id: 3,
@@ -36,9 +43,56 @@ const BoothServices = () => {
       hours: "Mon-Fri: 8:30 AM - 5:30 PM",
       services: ["Quick Registration", "Job Alerts", "Basic Support"],
       waitTime: "3-8 mins",
-      distance: "1.5 km"
+      distance: "1.5 km",
+      coordinates: [-73.9857, 40.7484]
     }
   ];
+
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    // Note: Replace 'your-mapbox-token' with actual Mapbox public token
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJjazEwM2h1djcwMXkwM21vOWZhMTQ2MW1uIn0.example';
+    
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [-74.006, 40.7128], // NYC center
+        zoom: 12,
+      });
+
+      // Add markers for each booth
+      nearbyBooths.forEach((booth) => {
+        const marker = new mapboxgl.Marker({
+          color: '#3B82F6' // Primary color
+        })
+          .setLngLat(booth.coordinates as [number, number])
+          .setPopup(
+            new mapboxgl.Popup({ offset: 25 })
+              .setHTML(`
+                <div class="p-2">
+                  <h3 class="font-semibold">${booth.name}</h3>
+                  <p class="text-sm text-gray-600">${booth.address}</p>
+                  <p class="text-sm">${booth.phone}</p>
+                  <p class="text-sm">${booth.hours}</p>
+                </div>
+              `)
+          )
+          .addTo(map.current!);
+      });
+
+      // Add navigation controls
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    } catch (error) {
+      console.log('Mapbox token not configured. Map will not load.');
+    }
+
+    return () => {
+      map.current?.remove();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
@@ -99,6 +153,25 @@ const BoothServices = () => {
                   We'll call you directly when matching work opportunities are available
                 </p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Interactive Map */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Booth Locations Map</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div 
+              ref={mapContainer} 
+              className="w-full h-96 rounded-lg"
+              style={{ minHeight: '400px' }}
+            />
+            <div className="mt-4 p-4 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                📍 Click on any marker to see booth details. Use the controls to zoom and navigate.
+              </p>
             </div>
           </CardContent>
         </Card>

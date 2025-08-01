@@ -37,7 +37,14 @@ const Index = () => {
               {/* Navigation Links */}
               <div className="hidden md:flex items-center space-x-6">
                 <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  How it Works
+                  Home
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/memberships")}
+                >
+                  Memberships
                 </Button>
                 <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                   Find Workers
@@ -46,7 +53,27 @@ const Index = () => {
                   Find Work
                 </Button>
                 <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                  Dashboard
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/auth")}
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/booth-services")}
+                >
                   Booth Services
+                </Button>
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                  Support
+                </Button>
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                  Contact
                 </Button>
               </div>
             </div>
@@ -62,9 +89,6 @@ const Index = () => {
               </div>
               
               {/* Action Buttons */}
-              <Button variant="outline" onClick={() => navigate("/auth")}>
-                Sign In
-              </Button>
               <Button onClick={() => navigate("/auth")}>
                 Get Started
               </Button>
