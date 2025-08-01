@@ -9,6 +9,7 @@ import WorkerDashboard from "./pages/WorkerDashboard";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import BoothServices from "./pages/BoothServices";
 import Memberships from "./pages/Memberships";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/memberships" element={<Memberships />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           <Route path="/booth-services" element={<BoothServices />} />

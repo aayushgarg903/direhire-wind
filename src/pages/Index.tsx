@@ -46,21 +46,12 @@ const Index = () => {
                 >
                   Memberships
                 </Button>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Find Workers
-                </Button>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Find Work
-                </Button>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Dashboard
-                </Button>
                 <Button 
                   variant="ghost" 
                   className="text-muted-foreground hover:text-foreground"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/support")}
                 >
-                  Sign In
+                  Support
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -68,12 +59,6 @@ const Index = () => {
                   onClick={() => navigate("/booth-services")}
                 >
                   Booth Services
-                </Button>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Support
-                </Button>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Contact
                 </Button>
               </div>
             </div>
