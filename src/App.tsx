@@ -8,8 +8,10 @@ import Auth from "./pages/Auth";
 import WorkerDashboard from "./pages/WorkerDashboard";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import BoothServices from "./pages/BoothServices";
+import FindLocalServices from "./pages/FindLocalServices";
 import Memberships from "./pages/Memberships";
 import Support from "./pages/Support";
+import Rating from "./pages/Rating";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           <Route path="/booth-services" element={<BoothServices />} />
+          <Route path="/find-local-services" element={<FindLocalServices />} />
+          <Route path="/rating" element={<Rating />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,12 +7,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { API_ENDPOINTS } from "@/config/api";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [userType, setUserType] = useState<"worker" | "customer">("worker");
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  // Handle URL parameters to set initial mode
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    if (mode === 'login') {
+      setIsLogin(true);
+    } else if (mode === 'signup') {
+      setIsLogin(false);
+    }
+  }, [searchParams]);
 
   const [workerData, setWorkerData] = useState({
     email: "",
@@ -45,6 +60,173 @@ const Auth = () => {
     "Repair Work", "Maintenance", "Installation", "Other"
   ];
 
+  const validateWorkerForm = () => {
+    if (!workerData.email) {
+      toast.error('Email is required');
+      return false;
+    }
+    if (!workerData.password) {
+      toast.error('Password is required');
+      return false;
+    }
+    if (!isLogin) {
+      if (!workerData.name) {
+        toast.error('Full name is required');
+        return false;
+      }
+      if (!workerData.phone) {
+        toast.error('Phone number is required');
+        return false;
+      }
+      if (!workerData.location) {
+        toast.error('Location is required');
+        return false;
+      }
+      if (!workerData.profession) {
+        toast.error('Profession is required');
+        return false;
+      }
+      if (!workerData.skillLevel) {
+        toast.error('Skill level is required');
+        return false;
+      }
+      if (!workerData.workType) {
+        toast.error('Work type is required');
+        return false;
+      }
+      if (!workerData.experience) {
+        toast.error('Years of experience is required');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleWorkerAuth = async () => {
+    if (!validateWorkerForm()) {
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      if (isLogin) {
+        // MongoDB worker login
+        const response = await fetch(API_ENDPOINTS.auth.worker.login, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: workerData.email,
+            password: workerData.password,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+        
+        const data = await response.json();
+        // Store JWT token or session data
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userType', 'worker');
+        
+        toast.success("Successfully logged in!");
+        navigate("/worker-dashboard");
+      } else {
+        // MongoDB worker signup
+        const response = await fetch(API_ENDPOINTS.auth.worker.signup, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: workerData.email,
+            password: workerData.password,
+            name: workerData.name,
+            phone: workerData.phone,
+            location: workerData.location,
+            profession: workerData.profession,
+            skillLevel: workerData.skillLevel,
+            workType: workerData.workType,
+            experience: workerData.experience,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Signup failed');
+        }
+        
+        toast.success("Worker account created successfully! Please check your email to verify your account.");
+        setIsLogin(true);
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "An error occurred during authentication";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCustomerAuth = async () => {
+    setLoading(true);
+    try {
+      if (isLogin) {
+        // MongoDB customer login
+        const response = await fetch(API_ENDPOINTS.auth.customer.login, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: customerData.email,
+            password: customerData.password,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+        
+        const data = await response.json();
+        // Store JWT token or session data
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userType', 'customer');
+        
+        toast.success("Successfully logged in!");
+        navigate("/customer-dashboard");
+      } else {
+        // MongoDB customer signup
+        const response = await fetch(API_ENDPOINTS.auth.customer.signup, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: customerData.email,
+            password: customerData.password,
+            name: customerData.name,
+            phone: customerData.phone,
+            location: customerData.location,
+            workNeeded: customerData.workNeeded,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Signup failed');
+        }
+        
+        toast.success("Customer account created successfully! Please check your email to verify your account.");
+        setIsLogin(true);
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "An error occurred during authentication";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
       <div className="container mx-auto px-4 py-8">
@@ -55,7 +237,7 @@ const Auth = () => {
             onClick={() => navigate("/")}
             className="mr-4"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Button>
           <h1 className="text-2xl font-bold">Join DireHire</h1>
@@ -143,11 +325,14 @@ const Auth = () => {
 
                         <div>
                           <Label htmlFor="location">Location</Label>
-                          <Input 
-                            id="location"
+                          <LocationAutocomplete
                             value={workerData.location}
-                            onChange={(e) => setWorkerData({...workerData, location: e.target.value})}
+                            onChange={(value) => setWorkerData({...workerData, location: value})}
                             placeholder="Enter your city/area"
+                            onLocationSelect={(location) => {
+                              // Store additional location data if needed
+                              console.log('Selected location:', location);
+                            }}
                           />
                         </div>
 
@@ -206,8 +391,13 @@ const Auth = () => {
                     )}
                   </div>
 
-                  <Button className="w-full" size="lg">
-                    {isLogin ? "Login as Worker" : "Create Worker Account"}
+                  <Button 
+                    className="w-full" 
+                    size="lg"
+                    onClick={handleWorkerAuth}
+                    disabled={loading}
+                  >
+                    {loading ? "Processing..." : (isLogin ? "Login as Worker" : "Create Worker Account")}
                   </Button>
                 </CardContent>
               </Card>
@@ -288,11 +478,14 @@ const Auth = () => {
 
                         <div>
                           <Label htmlFor="customerLocation">Location</Label>
-                          <Input 
-                            id="customerLocation"
+                          <LocationAutocomplete
                             value={customerData.location}
-                            onChange={(e) => setCustomerData({...customerData, location: e.target.value})}
+                            onChange={(value) => setCustomerData({...customerData, location: value})}
                             placeholder="Enter your city/area"
+                            onLocationSelect={(location) => {
+                              // Store additional location data if needed
+                              console.log('Selected customer location:', location);
+                            }}
                           />
                         </div>
 
@@ -313,8 +506,13 @@ const Auth = () => {
                     )}
                   </div>
 
-                  <Button className="w-full" size="lg">
-                    {isLogin ? "Login as Customer" : "Create Customer Account"}
+                  <Button 
+                    className="w-full" 
+                    size="lg"
+                    onClick={handleCustomerAuth}
+                    disabled={loading}
+                  >
+                    {loading ? "Processing..." : (isLogin ? "Login as Customer" : "Create Customer Account")}
                   </Button>
                 </CardContent>
               </Card>

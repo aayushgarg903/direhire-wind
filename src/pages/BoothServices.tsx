@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Clock, Users, ArrowLeft } from "lucide-react";
+import { MapPin, Phone, Clock, Users, ArrowLeft, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useRef, useState } from "react";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 
 const BoothServices = () => {
   const navigate = useNavigate();
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [searchLocation, setSearchLocation] = useState("");
 
   const nearbyBooths = [
     {
@@ -22,7 +22,7 @@ const BoothServices = () => {
       services: ["Worker Registration", "Job Matching", "KYC Verification"],
       waitTime: "5-10 mins",
       distance: "0.8 km",
-      coordinates: [-74.006, 40.7128] // NYC coordinates for demo
+      coordinates: { lat: 40.7128, lng: -74.006 }
     },
     {
       id: 2,
@@ -33,7 +33,7 @@ const BoothServices = () => {
       services: ["Worker Registration", "Customer Support", "Document Assistance"],
       waitTime: "10-15 mins",
       distance: "2.1 km",
-      coordinates: [-74.0059, 40.7614]
+      coordinates: { lat: 40.7614, lng: -74.0059 }
     },
     {
       id: 3,
@@ -44,55 +44,93 @@ const BoothServices = () => {
       services: ["Quick Registration", "Job Alerts", "Basic Support"],
       waitTime: "3-8 mins",
       distance: "1.5 km",
-      coordinates: [-73.9857, 40.7484]
+      coordinates: { lat: 40.7484, lng: -73.9857 }
     }
   ];
 
-  useEffect(() => {
-    if (!mapContainer.current) return;
+  const [filteredBooths, setFilteredBooths] = useState(nearbyBooths);
 
-    // Note: Replace 'your-mapbox-token' with actual Mapbox public token
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJjazEwM2h1djcwMXkwM21vOWZhMTQ2MW1uIn0.example';
-    
-    try {
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [-74.006, 40.7128], // NYC center
-        zoom: 12,
-      });
-
-      // Add markers for each booth
-      nearbyBooths.forEach((booth) => {
-        const marker = new mapboxgl.Marker({
-          color: '#3B82F6' // Primary color
-        })
-          .setLngLat(booth.coordinates as [number, number])
-          .setPopup(
-            new mapboxgl.Popup({ offset: 25 })
-              .setHTML(`
-                <div class="p-2">
-                  <h3 class="font-semibold">${booth.name}</h3>
-                  <p class="text-sm text-gray-600">${booth.address}</p>
-                  <p class="text-sm">${booth.phone}</p>
-                  <p class="text-sm">${booth.hours}</p>
-                </div>
-              `)
-          )
-          .addTo(map.current!);
-      });
-
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    } catch (error) {
-      console.log('Mapbox token not configured. Map will not load.');
+  // Filter booths based on search location
+  const handleLocationSearch = (location: string) => {
+    setSearchLocation(location);
+    if (!location.trim()) {
+      setFilteredBooths(nearbyBooths);
+      return;
     }
+    
+    const filtered = nearbyBooths.filter(booth => 
+      booth.name.toLowerCase().includes(location.toLowerCase()) ||
+      booth.address.toLowerCase().includes(location.toLowerCase())
+    );
+    setFilteredBooths(filtered);
+  };
 
-    return () => {
-      map.current?.remove();
-    };
-  }, []);
+  const MapComponent = () => {
+    useEffect(() => {
+      if (!mapRef.current) return;
+
+      // Show a functional fallback map with booth locations
+      mapRef.current.innerHTML = `
+        <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; position: relative; overflow: hidden;">
+          <!-- Map Header -->
+          <div style="position: absolute; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); padding: 12px; z-index: 10;">
+            <h4 style="margin: 0; font-weight: 600; color: #1f2937;">DireHire Booth Locations</h4>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280;">Click on locations below to view details</p>
+          </div>
+          
+          <!-- Interactive Booth List -->
+          <div style="position: absolute; top: 80px; left: 16px; right: 16px; bottom: 16px; overflow-y: auto;">
+            ${nearbyBooths.map((booth, index) => `
+              <div onclick="showBoothDetails(${index})" style="
+                background: rgba(255,255,255,0.95); 
+                margin-bottom: 12px; 
+                padding: 16px; 
+                border-radius: 8px; 
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 4px solid #3B82F6;
+              " onmouseover="this.style.background='rgba(255,255,255,1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.95)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 8px;">
+                  <h5 style="margin: 0; font-weight: 600; color: #1f2937; font-size: 16px;">${booth.name}</h5>
+                  <span style="background: #10B981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;">OPEN</span>
+                </div>
+                <p style="margin: 4px 0; font-size: 13px; color: #6b7280; display: flex; align-items: center;">
+                  <span style="margin-right: 6px;">📍</span> ${booth.address}
+                </p>
+                <p style="margin: 4px 0; font-size: 13px; color: #6b7280; display: flex; align-items: center;">
+                  <span style="margin-right: 6px;">📞</span> ${booth.phone}
+                </p>
+                <p style="margin: 4px 0; font-size: 13px; color: #6b7280; display: flex; align-items: center;">
+                  <span style="margin-right: 6px;">🕒</span> ${booth.hours}
+                </p>
+                <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+                  ${booth.services.map(service => `
+                    <span style="background: #EBF8FF; color: #1E40AF; padding: 4px 8px; border-radius: 4px; font-size: 11px;">${service}</span>
+                  `).join('')}
+                </div>
+                <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 12px; color: #059669; font-weight: 500;">⏱️ Wait: ${booth.waitTime}</span>
+                  <span style="font-size: 12px; color: #3B82F6; font-weight: 500;">📍 ${booth.distance}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <!-- Decorative Elements -->
+          <div style="position: absolute; top: 20%; right: -50px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; opacity: 0.5;"></div>
+          <div style="position: absolute; bottom: 20%; left: -30px; width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%; opacity: 0.3;"></div>
+        </div>
+      `;
+
+      // Add click handler for booth details
+      window.showBoothDetails = (index) => {
+        const booth = nearbyBooths[index];
+        alert(`${booth.name}\n\n${booth.address}\n${booth.phone}\n${booth.hours}\n\nServices: ${booth.services.join(', ')}\nWait Time: ${booth.waitTime}`);
+      };
+    }, []);
+
+    return <div ref={mapRef} style={{ width: "100%", height: "400px", borderRadius: "8px" }} />;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
@@ -113,6 +151,43 @@ const BoothServices = () => {
             <p className="text-muted-foreground">Physical support centers for workers without smartphones</p>
           </div>
         </div>
+
+        {/* Location Search Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Find Booths Near You
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Search for DireHire booths in your area or any specific location
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-md">
+              <LocationAutocomplete
+                value={searchLocation}
+                onChange={handleLocationSearch}
+                placeholder="Enter city, area, or address..."
+                onLocationSelect={(location) => {
+                  console.log('Selected location for booth search:', location);
+                  // You could use the coordinates to find nearby booths
+                }}
+              />
+            </div>
+            {searchLocation && (
+              <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                <p className="text-sm text-primary">
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  Showing booths near: <strong>{searchLocation}</strong>
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Found {filteredBooths.length} booth{filteredBooths.length !== 1 ? 's' : ''} in this area
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* How It Works Section */}
         <Card className="mb-8">
@@ -163,14 +238,10 @@ const BoothServices = () => {
             <CardTitle>Booth Locations Map</CardTitle>
           </CardHeader>
           <CardContent>
-            <div 
-              ref={mapContainer} 
-              className="w-full h-96 rounded-lg"
-              style={{ minHeight: '400px' }}
-            />
+            <MapComponent />
             <div className="mt-4 p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-muted-foreground">
-                📍 Click on any marker to see booth details. Use the controls to zoom and navigate.
+                📍 Click on any marker to see booth details. Blue markers indicate DireHire booth locations.
               </p>
             </div>
           </CardContent>
