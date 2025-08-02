@@ -1,52 +1,97 @@
-# Welcome to your Lovable project
+# DireHire Connect
 
-## Project info
+A modern platform connecting service providers with customers, built with React, TypeScript, Node.js, and MongoDB.
 
-**URL**: https://lovable.dev/projects/6dbc08ab-c79e-4d91-bde3-9dbac1dd20a4
+## 🚀 Features
 
-## How can I edit this code?
+- User authentication (Workers & Customers)
+- Service discovery and booking
+- Rating and review system
+- Multi-language support (English/Hindi)
+- Responsive design
+- Secure payment integration
 
-There are several ways of editing your application.
+## 🛠️ Prerequisites
 
-**Use Lovable**
+- Node.js (v16 or higher)
+- npm (v8 or higher) or yarn
+- MongoDB Atlas account or local MongoDB instance
+- Git
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6dbc08ab-c79e-4d91-bde3-9dbac1dd20a4) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### 1. Clone the Repository
 
-**Use your preferred IDE**
+```bash
+git clone https://github.com/aayushgarg903/direhire-wind.git
+cd direhire-wind
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 2. Install Dependencies
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Install root dependencies
+npm install
 
-Follow these steps:
+# Install frontend dependencies
+cd src && npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install backend dependencies
+cd ../server && npm install
+cd ..
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 3. Environment Setup
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Copy `.env.example` to `.env` in the root directory
+2. Update the environment variables with your configuration
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 4. Start Development Servers
+
+#### Frontend
+```bash
+cd src
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+#### Backend (in a new terminal)
+```bash
+cd server
+npm run dev
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 5. Access the Application
 
-**Use GitHub Codespaces**
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000/api
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
+## 📦 Production Build
+
+```bash
+# Build frontend
+cd src
+npm run build
+
+# Start production server
+cd ../server
+npm start
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with ❤️ by Aayush Garg
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
